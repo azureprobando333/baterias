@@ -4,27 +4,21 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
 
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    permissions:
-      id-token: write
-      contents: read
     steps:
+      # Clonar el repo
       - uses: actions/checkout@v3
 
-      - name: Build And Deploy
+      # Subir los archivos directamente sin build
+      - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GRASS_0C948A210 }}
-          action: "upload"             # Solo subir archivos, no hacer build
-          app_location: "/"            # index.html en la raíz
-          api_location: ""             # sin backend
-          output_location: ""          # sin carpeta de build
-          app_build_command: ""        # DESACTIVAR cualquier build
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RECARGARBATERIASYPAGOS }}
+          action: "upload"           # solo subir archivos
+          app_location: "/"          # index.html en la raíz
+          api_location: ""           # sin backend
+          output_location: "/"       # sin carpeta de build
+          app_build_command: ""      # DESACTIVAR build de Node.js
