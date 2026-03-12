@@ -11,53 +11,20 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     permissions:
       id-token: write
       contents: read
     steps:
-      # Clonar el repositorio
       - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
 
-      # Obtener Id Token (necesario para autenticación con Azure)
-      - name: Install OIDC Client
-        run: npm install @actions/core@1.6.0 @actions/http-client
-
-      - name: Get Id Token
-        uses: actions/github-script@v6
-        id: idtoken
-        with:
-          script: |
-            const coredemo = require('@actions/core')
-            return await coredemo.getIDToken()
-          result-encoding: string
-
-      # Build y deploy
       - name: Build And Deploy
-        id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GRASS_0C948A210 }}
-          action: "upload"
-          ###### Configuración de tu app HTML/CSS/JS puro ######
-          app_location: "/"      # index.html y carpetas CSS/JS en la raíz
-          api_location: ""       # vacío, no hay backend
-          output_location: ""    # vacío, no hay build
-          github_id_token: ${{ steps.idtoken.outputs.result }}
-          ###### Fin de configuración ######
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          action: "close"
+          action: "upload"             # Solo subir archivos, no hacer build
+          app_location: "/"            # index.html en la raíz
+          api_location: ""             # sin backend
+          output_location: ""          # sin carpeta de build
+          app_build_command: ""        # DESACTIVAR cualquier build
